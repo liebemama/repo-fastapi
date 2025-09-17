@@ -1,0 +1,7 @@
+{
+  "name": "arabic_asr_clean",
+  "version": "1.0.0",
+  "description": "Arabic ASR → normalize → spellcheck (returns final cleaned text)",
+  "sequence_file": "workflow.json",
+  "tags": ["arabic", "asr", "clean", "spellcheck"]
+}

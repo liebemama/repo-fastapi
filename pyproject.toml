@@ -1,0 +1,39 @@
+# Project-wide tooling config (Ruff-only)
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+exclude = [
+  ".venv", "venv", "build", "dist", "__pycache__", ".git"
+]
+
+[tool.ruff.lint]
+# E,F,I: (pycodestyle, pyflakes, isort via Ruff)
+# UP: pyupgrade, B: bugbear (logic-level lint checks)
+select = ["E", "F", "I", "UP", "B"]
+ignore = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["app", "tools"]
+combine-as-imports = true
+lines-after-imports = 2
+
+[tool.ruff.format]
+# Black-like formatting without Black
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["E501"]
+"scripts/**" = ["E501"]
+
+# --- Usage Notes (for README) ---
+# Run lint checks:
+#   ruff check .
+#
+# Auto-fix issues (unused imports, spacing, import order, etc.):
+#   ruff check . --fix
+#
+# Format code (Black-like):
+#   ruff format .

@@ -1,0 +1,79 @@
+name: CI • Ubuntu
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - ".github/workflows/ci-ubuntu.yml"
+      - "app/**"
+      - "tests/**"
+  pull_request:
+    paths:
+      - ".github/workflows/ci-ubuntu.yml"
+      - "app/**"
+      - "tests/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ubuntu:
+    name: Ubuntu • py${{ matrix.python }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12']
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+      DEVICE: cpu
+      APP_RELOAD: "false"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+
+      - name: Install deps
+        shell: bash
+        run: |
+          python -m pip install -U pip ruff
+          pip install -r requirements.txt
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+      - name: Ruff (lint + fmt check)
+        shell: bash
+        run: |
+          ruff --version
+          ruff check .
+          ruff format --check
+
+      - name: Pytest (CPU only)
+        shell: bash
+        run: |
+          pytest -q -m "not gpu and not gpu_cuda and not gpu_mps" --maxfail=1
+
+      - name: Smoke test API (/health)
+        shell: bash
+        run: |
+          uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+          pid=$!
+          python - << 'PY'
+          import time, urllib.request, sys
+          for _ in range(30):
+              try:
+                  with urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=1) as r:
+                      print(r.read())
+                      sys.exit(0)
+              except Exception:
+                  time.sleep(0.5)
+          sys.exit(1)
+          PY
+          kill $pid || true

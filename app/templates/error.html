@@ -1,0 +1,52 @@
+<!-- app/templates/error.html -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ title or (code|string ~ " – Error") }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { --bg:#0b0f14; --card:#121822; --muted:#9fb3c8; --fg:#e6edf3; --accent:#7aa2f7; --red:#f7768e; }
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",Arial,"Apple Color Emoji","Segoe UI Emoji";}
+    .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .card{max-width:800px;width:100%;background:var(--card);border-radius:16px;padding:24px 28px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+    .code{font-size:56px;font-weight:800;letter-spacing:2px;color:var(--accent);margin:0}
+    .msg{font-size:20px;margin:.25rem 0 1rem}
+    .meta{display:grid;grid-template-columns:140px 1fr;gap:8px 16px;margin-top:12px}
+    .k{color:var(--muted)}
+    .v code, pre{background:#0f141b;border:1px solid #1c2532;border-radius:8px;padding:6px 8px;overflow:auto}
+    .actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+    a.btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid #223048;color:var(--fg);text-decoration:none}
+    a.btn:hover{background:#182131}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="code">{{ code }}</div>
+      <div class="msg">{{ message }}</div>
+
+      <div class="meta">
+        <div class="k">App</div><div class="v">{{ app_name }} ({{ env }})</div>
+        <div class="k">Path</div><div class="v"><code>{{ path }}</code></div>
+        <div class="k">Method</div><div class="v"><code>{{ method }}</code></div>
+        {% if request_id %}
+          <div class="k">Request ID</div><div class="v"><code>{{ request_id }}</code></div>
+        {% endif %}
+        {% if details %}
+          <div class="k">Details</div>
+          <div class="v">
+            <pre>{{ details | tojson(indent=2) }}</pre>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="actions">
+        <a class="btn" href="/">← Back to Home</a>
+        <a class="btn" href="?format=json">View as JSON</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

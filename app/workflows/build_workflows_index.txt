@@ -1,0 +1,22 @@
+📁 repo-fastapi/
+├── 📁 app/
+│   ├── 📁 routes/
+│   │   ├── __init__.py
+│   │   └── workflow.py
+│   ├── 📁 workflows/
+│   │   ├── 📁 asr_clean_ar/
+│   │   │   ├── README.md
+│   │   │   ├── manifest.json
+│   │   │   └── workflow.json
+│   │   ├── __init__.py
+│   │   ├── orchestrator.py
+|   |   ├── README.md
+│   │   └── registry.py
+│   ├── __init__.py
+│   ├── main.py
+├── 📁 docs/
+│   └── workflows-overview.md
+├── 📁 samples/
+│   └── test.wav
+└── 📁 tools/
+    └── build_workflows_index.py

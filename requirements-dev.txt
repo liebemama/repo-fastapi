@@ -1,0 +1,22 @@
+# requirements-dev.txt
+# Development & Testing dependencies for NeuroServe
+
+# --- Testing ---
+pytest
+pytest-cov
+httpx             # required for fastapi.testclient
+
+# --- Linting & Formatting ---
+ruff              # linting & import sorting
+pre-commit        # git hooks to enforce code style
+
+# --- Typing (اختياري, للتأكد من الأنواع) ---
+mypy
+types-requests    # typing stubs for requests
+types-PyYAML      # typing stubs for yaml if مستخدم
+
+# --- Utilities ---
+coverage          # standalone coverage reporting
+
+flake8            # linting for Python code
+flake8-pyproject  # flake8 config from pyproject.toml

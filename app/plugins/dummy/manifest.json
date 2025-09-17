@@ -1,0 +1,5 @@
+{
+  "provider": "dummy",
+  "task": "ping",
+  "text": "test"
+}

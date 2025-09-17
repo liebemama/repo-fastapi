@@ -1,0 +1,27 @@
+name: Plugins docs drift
+
+on:
+  pull_request:
+    paths:
+      - "app/plugins/**"
+      - "tools/build_plugins_index.py"
+      - "docs/plugins-overview.md"
+  push:
+    branches: [ main ]
+    paths:
+      - "app/plugins/**"
+      - "tools/build_plugins_index.py"
+      - "docs/plugins-overview.md"
+
+jobs:
+  docs-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build plugins index & verify
+        run: |
+          python -m tools.build_plugins_index --force-readme
+          git diff --exit-code docs/plugins-overview.md app/plugins/**/README.md

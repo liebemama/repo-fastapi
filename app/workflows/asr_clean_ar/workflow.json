@@ -1,0 +1,31 @@
+{
+  "name": "arabic_asr_clean",
+  "sequence": [
+    {
+      "name": "asr",
+      "plugin": "whisper",
+      "task": "speech-to-text",
+      "payload": {
+        "audio_url": "{audio_url}",
+        "language": "ar"
+      }
+    },
+    {
+      "name": "norm",
+      "plugin": "text_tools",
+      "task": "arabic_normalize",
+      "payload": {
+        "text": "{asr.text}"
+      }
+    },
+    {
+      "name": "spell",
+      "plugin": "text_tools",
+      "task": "spellcheck_ar",
+      "payload": {
+        "text": "{norm.text}"
+      }
+    }
+  ],
+  "return": "spell"
+}

@@ -1,0 +1,78 @@
+name: CI • Windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - ".github/workflows/ci-windows.yml"
+      - "app/**"
+      - "tests/**"
+  pull_request:
+    paths:
+      - ".github/workflows/ci-windows.yml"
+      - "app/**"
+      - "tests/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows • py${{ matrix.python }}
+    runs-on: windows-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.12']
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+      DEVICE: cpu
+      APP_RELOAD: "false"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+
+      - name: Install deps
+        shell: powershell
+        run: |
+          python -m pip install -U pip ruff
+          pip install -r requirements.txt
+          if (Test-Path requirements-dev.txt) { pip install -r requirements-dev.txt }
+
+      - name: Ruff (lint + fmt check)
+        shell: powershell
+        run: |
+          ruff --version
+          ruff check .
+          ruff format --check
+
+      - name: Pytest (CPU only)
+        shell: powershell
+        run: |
+          pytest -q -m "not gpu and not gpu_cuda and not gpu_mps" --maxfail=1
+
+      - name: Smoke test API (/health)
+        shell: powershell
+        run: |
+          $proc = Start-Process -FilePath uvicorn -ArgumentList "app.main:app --host 127.0.0.1 --port 8000" -PassThru
+          try {
+            $ok = $false
+            for ($i = 0; $i -lt 30; $i++) {
+              try {
+                $r = Invoke-WebRequest -Uri "http://127.0.0.1:8000/health" -TimeoutSec 1 -UseBasicParsing
+                if ($r.StatusCode -eq 200) { $ok = $true; break }
+              } catch { Start-Sleep -Milliseconds 500 }
+            }
+            if (-not $ok) { exit 1 }
+          } finally {
+            if ($proc) { Stop-Process -Id $proc.Id -Force }
+          }

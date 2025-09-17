@@ -1,0 +1,47 @@
+flowchart LR
+  classDef bucket fill:#f5f5f5,stroke:#bbb,stroke-width:1px,rx:8px,ry:8px;
+  classDef item fill:#fff,stroke:#888,rx:6px,ry:6px;
+
+  subgraph API___Routes[API / Routes]
+    class API___Routes bucket;
+    app_routes[/app/routes/]
+    class app_routes item;
+  end
+  subgraph Core___Config[Core / Config]
+    class Core___Config bucket;
+    app_core[/app/core/]
+    class app_core item;
+  end
+  subgraph Plugins___Extensions[Plugins / Extensions]
+    class Plugins___Extensions bucket;
+    app_plugins[/app/plugins/]
+    class app_plugins item;
+  end
+  subgraph Workflows___Orchestrators[Workflows / Orchestrators]
+    class Workflows___Orchestrators bucket;
+    app_workflows[/app/workflows/]
+    class app_workflows item;
+  end
+  subgraph Frontend___UI[Frontend / UI]
+    class Frontend___UI bucket;
+    app_templates[/app/templates/]
+    class app_templates item;
+  end
+  subgraph Tests[Tests]
+    class Tests bucket;
+    tests[/tests/]
+    class tests item;
+    scripts[/scripts/]
+    class scripts item;
+  end
+  subgraph Docs[Docs]
+    class Docs bucket;
+    docs[/docs/]
+    class docs item;
+  end
+  API___Routes --> Plugins___Extensions
+  Workflows___Orchestrators --> Plugins___Extensions
+  Frontend___UI --> API___Routes
+  API___Routes --> Core___Config
+  Plugins___Extensions --> Core___Config
+  Workflows___Orchestrators --> Core___Config

@@ -1,0 +1,20 @@
+flowchart TB
+  classDef runtime fill:#F1F8E9,stroke:#AED581,rx:8px,ry:8px;
+  classDef db fill:#FFF8E1,stroke:#FFCA28,rx:8px,ry:8px;
+  classDef cache fill:#E8EAF6,stroke:#7986CB,rx:8px,ry:8px;
+  classDef mq fill:#E1F5FE,stroke:#4FC3F7,rx:8px,ry:8px;
+  App[Web App]
+  class App runtime;
+  App:::runtime --> FastAPI[FastAPI]
+  App:::runtime --> Flask[Flask]
+  App --> Plugins[Plugin Loader]
+  DB[(PostgreSQL/SQLAlchemy)]:::db
+  App --> DB
+  Cache[(Redis)]:::cache
+  App --> Cache
+  Kafka[(Kafka)]:::mq
+  App --> Kafka
+  Rabbit[(RabbitMQ)]:::mq
+  App --> Rabbit
+  ML[(PyTorch/Transformers)]
+  App --> ML

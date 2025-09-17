@@ -1,0 +1,7 @@
+{
+  "name": "text_tools",
+  "version": "0.1.0",
+  "entrypoint": "app.plugins.text_tools.service:Plugin",
+  "tasks": ["postprocess"],
+  "description": "Arabic text cleanup: normalize, fix typos, punctuate."
+}
